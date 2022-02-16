@@ -6,7 +6,7 @@ export default function Tip({amount}) {
     const [useCustomTip, setUseCustomTip] = useState(false)
 
     function isTipValid(amount) {
-        return String(amount).match(/^[0-9]+$/) && amount > 0 && amount < 100
+        return String(amount).match(/^[0-9]+$/) && amount >= 0 && amount < 100
     }
 
     function changePercentage(amount, isCustomPercentage) {
@@ -28,8 +28,9 @@ export default function Tip({amount}) {
                 </Text>
             </View>
             <View class='tip-options' style={styles.row}>
-                {validTipPercentages.map((validTipPercentage) => {
+                {validTipPercentages.map((validTipPercentage, index) => {
                     return <Button
+                                key={index}
                                 class='tip-percentage'
                                 title={validTipPercentage.text}
                                 onPress={() => {
@@ -40,28 +41,31 @@ export default function Tip({amount}) {
                             />
                 })}
                 <Button
+                    key={validTipPercentages.length}
                     class='tip-percentage'
                     title="Custom"
                     onPress={() => setUseCustomTip(!!!useCustomTip)}
                 />
             </View>
-            <View>
             {useCustomTip && (
                 <View class='custom-tip-percentage'>
                     <Text>
                         Enter percentage here: 
                     </Text>
                     <TextInput
-                        onChangeText={(value) => { if (isTipValid(value)) { changePercentage(value, true) } }}
-                        value={(tipPercentage)/100}
+                        onChangeText={(value) => {
+                            let numValue = parseInt(value)
+                            if (isTipValid(numValue)) { 
+                                changePercentage(numValue, true) 
+                            }
+                        }}
+                        value={tipPercentage}
                         maxLength={2}
-                        placeholder="0"
                         keyboardType="numeric"
                     />
                     <Text>%</Text>
                 </View>
             )}
-        </View>
         </>
     )   
 }
